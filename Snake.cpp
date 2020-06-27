@@ -50,7 +50,7 @@ void Snake::GateCheck(int Map[][MAX], Gate gate[2])
 				int next_y = gate[1 - i].y + dir[current_direction][0];
 				int next_x = gate[1 - i].x + dir[current_direction][1];
 
-				if(Map[next_y][next_x] != WALL) {
+				if(Map[next_y][next_x] != WALL && Map[next_y][next_x] != IMMUNE_WALL) {
 					Head->y = next_y;
 					Head->x = next_x;
 					break;
