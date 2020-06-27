@@ -7,85 +7,60 @@ GameManager::GameManager()
 	{
 		for (int x = 0; x < MAX; x++)
 		{
-			if (x == 0 || x == MAX - 1 || y == 0 || y == MAX - 1)
+			for(int i = 0; i < 4; i++)
 			{
-				if ((x == 0 && y == 0) || (x == 0 && y == MAX - 1) || (x == MAX - 1 && y == 0) || (x == MAX - 1 && y == MAX - 1))
-					Map[y][x] = IMMUNE_WALL;
-				else
-					Map[y][x] = WALL;
-			}
-			else
-			{
-				if (rand() % 100 == 0)
-					Map[y][x] = WALL;
-				else
-					Map[y][x] = BLANK;
+				if (x == 0 || x == MAX - 1 || y == 0 || y == MAX - 1) {
+					if ((x == 0 && y == 0) || (x == 0 && y == MAX - 1) || (x == MAX - 1 && y == 0) || (x == MAX - 1 && y == MAX - 1))
+						Map[i][y][x] = IMMUNE_WALL;
+					else
+						Map[i][y][x] = WALL;
+				}
+				else 
+					Map[i][y][x] = BLANK;
 			}
 		}
 	}
 
-	for (int y = 0; y < MAX; y++)
+	for(int i = 0; i < 4; i++)
 	{
-		for (int x = 0; x < MAX; x++)
+		for(int x = 10 - 1; x <= 10 + 1; x++)
 		{
-			if (x == 0 || x == MAX - 1 || y == 0 || y == MAX - 1)
-			{
-				if ((x == 0 && y == 0) || (x == 0 && y == MAX - 1) || (x == MAX - 1 && y == 0) || (x == MAX - 1 && y == MAX - 1))
-					Map1[y][x] = IMMUNE_WALL;
-				else
-					Map1[y][x] = WALL;
-			}
-			else
-			{
-				if (rand() %70 == 0)
-					Map1[y][x] = WALL;
-				else
-					Map1[y][x] = BLANK;
-			}
+			Map[i][10 - 4][x] = Map[i][10 + 4][x] = WALL;
+			wall_list[i].push_back(make_pair(10 - 4, x));
+			wall_list[i].push_back(make_pair(10 + 4, x));
 		}
 	}
 
-	for (int y = 0; y < MAX; y++)
+	for(int i = 1; i < 4; i++)
 	{
-		for (int x = 0; x < MAX; x++)
-		{
-			if (x == 0 || x == MAX - 1 || y == 0 || y == MAX - 1)
-			{
-				if ((x == 0 && y == 0) || (x == 0 && y == MAX - 1) || (x == MAX - 1 && y == 0) || (x == MAX - 1 && y == MAX - 1))
-					Map2[y][x] = IMMUNE_WALL;
-				else
-					Map2[y][x] = WALL;
-			}
-			else
-			{
-				if (rand() % 50 == 0)
-					Map2[y][x] = WALL;
-				else
-					Map2[y][x] = BLANK;
-			}
-		}
+		Map[i][10 - 4][10 - 3] = Map[i][10 - 4][10 + 3] = WALL;
+		Map[i][10 + 4][10 - 3] = Map[i][10 + 4][10 + 3] = WALL;
+		wall_list[i].push_back(make_pair(10 - 4, 10 - 3));
+		wall_list[i].push_back(make_pair(10 + 4, 10 + 3));
+		wall_list[i].push_back(make_pair(10 - 4, 10 + 3));
+		wall_list[i].push_back(make_pair(10 + 4, 10 - 3));
 	}
 
-	for (int y = 0; y < MAX; y++)
+	for(int i = 2; i < 4; i++)
 	{
-		for (int x = 0; x < MAX; x++)
-		{
-			if (x == 0 || x == MAX - 1 || y == 0 || y == MAX - 1)
-			{
-				if ((x == 0 && y == 0) || (x == 0 && y == MAX - 1) || (x == MAX - 1 && y == 0) || (x == MAX - 1 && y == MAX - 1))
-					Map3[y][x] = IMMUNE_WALL;
-				else
-					Map3[y][x] = WALL;
-			}
-			else
-			{
-				if (rand() % 30 == 0)
-					Map3[y][x] = WALL;
-				else
-					Map3[y][x] = BLANK;
-			}
-		}
+		Map[i][10 - 1][10 - 5] = Map[i][10 - 1][10 + 5] = WALL;
+		Map[i][10 + 1][10 - 5] = Map[i][10 + 1][10 + 5] = WALL;
+		wall_list[i].push_back(make_pair(10 - 1, 10 - 5));
+		wall_list[i].push_back(make_pair(10 + 1, 10 + 5));
+		wall_list[i].push_back(make_pair(10 - 1, 10 + 5));
+		wall_list[i].push_back(make_pair(10 + 1, 10 - 5));
 	}
+
+	for(int i = 3; i < 4; i++)
+	{
+		Map[i][10 - 7][10 - 7] = Map[i][10 - 7][10 + 7] = WALL;
+		Map[i][10 + 7][10 - 7] = Map[i][10 + 7][10 + 7] = WALL;
+		wall_list[i].push_back(make_pair(10 - 7, 10 - 7));
+		wall_list[i].push_back(make_pair(10 + 7, 10 + 7));
+		wall_list[i].push_back(make_pair(10 - 7, 10 + 7));
+		wall_list[i].push_back(make_pair(10 + 7, 10 - 7));
+	}
+
 	mission[0].MaxLevel = 1;
 	mission[0].LevelCheck = false;
 	mission[0].MaxGrowth = 1;
@@ -136,16 +111,14 @@ GameManager::GameManager()
 	OldGateClock = 0;
 }
 
-void GameManager::MapDraw(int Map[MAX][MAX])
+void GameManager::DrawMap(int Map[MAX][MAX])
 {
 	clear();
 	for (int y = 0; y < MAX; y++)
 	{
 		for (int x = 0; x < MAX; x++)
 		{
-			int color = 0;
-			if (Map[y][x] == BLANK)
-				color = Color::WHITE;
+			int color = Color::WHITE;
 			if (Map[y][x] == WALL)
 				color = Color::MAGENTA;
 			else if (Map[y][x] == HEAD)
@@ -164,25 +137,25 @@ void GameManager::MapDraw(int Map[MAX][MAX])
 			DrawBlock(color);
 		}
 		if (y == 0)
-			printw("\tScore Board  %d Stage", Stage);
+			printw("    Score Board  %d Stage", Stage);
 		else if (y == 1)
-			printw("\tB : %d/%d",snake.GetLevel(), mission[Stage - 1].MaxLevel);
+			printw("    B : %d/%d",snake.GetLevel(), mission[Stage - 1].MaxLevel);
 		else if (y == 2)
-			printw("\t+ : %d", snake.GetGrowth());
+			printw("    + : %d", snake.GetGrowth());
 		else if (y == 3)
-			printw("\t- : %d", snake.GetPosion());
+			printw("    - : %d", snake.GetPosion());
 		else if (y == 4)
-			printw("\tG : %d", snake.GetGate());
+			printw("    G : %d", snake.GetGate());
 		else if (y == 7)
-			printw("\t Mission");
+			printw("     Mission");
 		else if (y == 8)
-			printw("\tB : %d (%c)", mission[Stage - 1].MaxLevel, mission[Stage - 1].LevelCheck ? 'v' : ' ');
+			printw("    B : %d (%c)", mission[Stage - 1].MaxLevel, mission[Stage - 1].LevelCheck ? 'v' : ' ');
 		else if (y == 9)
-			printw("\t+ : %d (%c)", mission[Stage - 1].MaxGrowth, mission[Stage - 1].GrowthCheck ? 'v' : ' ');
+			printw("    + : %d (%c)", mission[Stage - 1].MaxGrowth, mission[Stage - 1].GrowthCheck ? 'v' : ' ');
 		else if (y == 10)
-			printw("\t- : %d (%c)", mission[Stage - 1].MaxPoison, mission[Stage - 1].PoisonCheck ? 'v' : ' ');
+			printw("    - : %d (%c)", mission[Stage - 1].MaxPoison, mission[Stage - 1].PoisonCheck ? 'v' : ' ');
 		else if (y == 11)
-			printw("\tG : %d (%c)", mission[Stage - 1].MaxGate, mission[Stage - 1].GateCheck ? 'v' : ' ');
+			printw("    G : %d (%c)", mission[Stage - 1].MaxGate, mission[Stage - 1].GateCheck ? 'v' : ' ');
 		printw("\n");
 	}
 }
@@ -203,20 +176,41 @@ void GameManager::Update(int Map[MAX][MAX])
 
 void GameManager::SetGate(int Map[MAX][MAX])
 {
+	int last_r = -1;
 	for (int i = 0; i < 2; i++)
 	{
-		if (gate[i].x != -1 && gate[i].y != -1)
-			Map[gate[i].y][gate[i].x] = WALL;
-		if (i == 0)
-		{
-			gate[i].x = rand() % 2 == 2 ? 0 : MAX - 1;
-			gate[i].y = rand() % (MAX - 2) + 1;
+		int last_y = gate[i].y;
+		int last_x = gate[i].x;
+		
+		if(rand() % 3 != 0) {
+			do 
+			{
+				if (rand() % 2 == 0) {
+					gate[i].x = rand() % 2 == 2 ? 0 : MAX - 1;
+					gate[i].y = rand() % (MAX - 2) + 1;
+				}
+				else {
+					gate[i].x = rand() % (MAX - 2) + 1;
+					gate[i].y = rand() % 2 == 2 ? 0 : MAX - 1;
+				}
+			}
+			while(i == 1 && gate[0].y == gate[1].y && gate[0].x == gate[1].x);
 		}
-		else
-		{
-			gate[i].x = rand() % (MAX - 2) + 1;
-			gate[i].y = rand() % 2 == 2 ? 0 : MAX - 1;
+		else {
+			int r;
+			do 
+			{
+				r = rand() % wall_list[Stage - 1].size();
+			}
+			while(r == last_r);
+			
+			gate[i].y = wall_list[Stage - 1][r].first;
+			gate[i].x = wall_list[Stage - 1][r].second;
+			last_r = r;
 		}
+
+		if (last_y != -1 && last_x != -1)
+			Map[last_y][last_x] = WALL;
 		Map[gate[i].y][gate[i].x] = GATE;
 	}
 }
@@ -227,13 +221,15 @@ void GameManager::SetItem(int Map[MAX][MAX])
 	{
 		if (ItemList[i].x != -1 && ItemList[i].y != -1)
 			Map[ItemList[i].y][ItemList[i].x] = BLANK;
-		ItemList[i].x = rand() % (MAX - 2) + 1;
-		ItemList[i].y = rand() % (MAX - 2) + 1;
-		if (snake.CheckNode(ItemList[i].x, ItemList[i].x))
+
+		do
 		{
-			i--;
-			continue;
+			ItemList[i].x = rand() % (MAX - 2) + 1;
+			ItemList[i].y = rand() % (MAX - 2) + 1;
 		}
+		while(snake.CheckNode(ItemList[i].x, ItemList[i].y)
+			|| Map[ItemList[i].y][ItemList[i].x] != BLANK);
+		
 		ItemList[i].Growth = rand() % 2 == 0 ? true : false;
 		if (ItemList[i].Growth)
 			Map[ItemList[i].y][ItemList[i].x] = GROWTH;
@@ -268,32 +264,19 @@ void GameManager::DrawBlock(int color)
 void GameManager::GamePlay()
 {
 	snake.SetSnake(MAX / 2 - 2, MAX / 2);
-	snake.UpdateMap(Map);
+	snake.UpdateMap(Map[0]);
 	while (true)
 	{
 		snake.Input();
-		bool Check;
-		if (Stage == 1)
-		{
-			Update(Map);
-			Check = snake.Update(Map, gate);
-		}
-		else if (Stage == 2)
-		{
-			Update(Map1);
-			Check = snake.Update(Map1, gate);
-		}
-		else if (Stage == 3)
-		{
-			Update(Map2);
-			Check = snake.Update(Map2, gate);
-		}
-		else
-		{
-			Update(Map3);
-			Check = snake.Update(Map3, gate);
-		}
-		if (Check)
+		int check;
+		int (&current_map)[MAX][MAX] = Map[Stage - 1];
+
+		Update(current_map);
+		check = snake.Update(current_map, gate);
+		if(check == -1)
+			break;
+
+		if (check)
 		{
 			if (MissionCheck())
 			{
@@ -306,26 +289,19 @@ void GameManager::GamePlay()
 					{
 						for (int x = 0; x < MAX; x++)
 						{
-							if (Map[y][x] == HEAD || Map[y][x] == TAIL)
-								Map[y][x] = BLANK;
+							if (current_map[y][x] == HEAD || current_map[y][x] == TAIL)
+								current_map[y][x] = BLANK;
 						}
 					}
 					snake.SetSnake(MAX / 2 - 2, MAX / 2);
-					snake.UpdateMap(Map);
+					snake.UpdateMap(current_map);
 					OldItemClock = 0;
 					OldGateClock = 0;
-					Map[gate[0].y][gate[0].x] = WALL;
-					Map[gate[1].y][gate[1].x] = WALL;
+					current_map[gate[0].y][gate[0].x] = WALL;
+					current_map[gate[1].y][gate[1].x] = WALL;
 				}
 			}
-			if (Stage == 1)
-				MapDraw(Map);
-			else if (Stage == 2)
-				MapDraw(Map1);
-			else if (Stage == 3)
-				MapDraw(Map2);
-			else
-				MapDraw(Map3);
+			DrawMap(current_map);
 		}
 		napms(1);
 	}

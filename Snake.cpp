@@ -42,31 +42,22 @@ void Snake::GateCheck(int Map[][MAX], Gate gate[2])
 		if (gate[i].x == Head->x && gate[i].y == Head->y)
 		{
 			GateCount++;
-			if (gate[!i].x == 0)
+			DIRECTION current_direction = Direction;
+			const int dir[4][2] = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}};
+			for(int j = 0; j < 4; j++)
 			{
-				Direction = RIGHT;
-				Head->x = gate[!i].x + 1;
-				Head->y = gate[!i].y;
+				current_direction = NextDirection(current_direction, j);
+				int next_y = gate[1 - i].y + dir[current_direction][0];
+				int next_x = gate[1 - i].x + dir[current_direction][1];
+
+				if(Map[next_y][next_x] != WALL) {
+					Head->y = next_y;
+					Head->x = next_x;
+					break;
+				}
 			}
-			else if( gate[!i].x == MAX - 1)
-			{
-				Direction = LEFT;
-				Head->x = gate[!i].x - 1;
-				Head->y = gate[!i].y;
-			}
-			else if (gate[!i].y == 0)
-			{
-				Direction = DOWN;
-				Head->x = gate[!i].x ;
-				Head->y = gate[!i].y + 1;
-			}
-			else if (gate[!i].y == MAX - 1)
-			{
-				Direction = UP;
-				Head->x = gate[!i].x;
-				Head->y = gate[!i].y - 1;
-			}
-			return;
+			Direction = current_direction;
+			break;
 		}
 	}
 }
@@ -84,7 +75,7 @@ bool Snake::TailCheck(int x, int y)
 	return false;
 }
 
-void Snake::Poison() 
+bool Snake::Poison() 
 {
 	Node* temp = Head;
 	while (temp->Next != NULL)
@@ -95,8 +86,8 @@ void Snake::Poison()
 			temp->Next = NULL;
 			Level--;
 			if (Level <= 2)
-				exit(1);
-			return;
+				return false;
+			return true;
 		}
 		temp = temp->Next;
 	}
@@ -114,7 +105,7 @@ void Snake::Growth()
 	Level++;
 }
 
-void Snake::ItemCheck(int Map[MAX][MAX])
+bool Snake::ItemCheck(int Map[MAX][MAX])
 {
 	switch (Map[Head->y][Head->x])
 	{
@@ -123,13 +114,13 @@ void Snake::ItemCheck(int Map[MAX][MAX])
 		GrowthCount++;
 		break;
 	case POISON:
-		Poison();
 		PoisonCount++;
-		break;
+		return Poison();
 	}
+	return true;
 }
 
-void Snake::Move(int Map[][MAX], Gate gate[2])
+bool Snake::Move(int Map[][MAX], Gate gate[2])
 {
 	DeleteMap(Map);
 	Head->LastX = Head->x;
@@ -150,20 +141,23 @@ void Snake::Move(int Map[][MAX], Gate gate[2])
 		break;
 	}
 	last_direction = Direction;
+	
 	if (TailCheck(Head->x, Head->y))
 	{
 		DeleteSnake(Head);
-		exit(1);
+		return false;
 	}
 	GateCheck(Map, gate);
 	if (Map[Head->y][Head->x] == WALL)
 	{
 		DeleteSnake(Head);
-		exit(1);
+		return false;
 	}
 	MoveTail(Head);
-	ItemCheck(Map);
+	if(!ItemCheck(Map))
+		return false;
 	UpdateMap(Map);
+	return true;
 }
 
 void Snake::MoveTail(Node* Node)
@@ -193,7 +187,7 @@ void Snake::SetSnake(int x, int y)
 		DeleteSnake(Head);
 		Head = NULL;
 	}
-	Head = new  Node;
+	Head = new Node;
 	Head->x = x;
 	Head->y = y;
 	Head->Next = NULL;
@@ -215,14 +209,15 @@ void Snake::SetSnake(int x, int y)
 	GateCount = 0;
 }
 
-bool Snake::Update(int Map[][MAX], Gate gate[2])
+int Snake::Update(int Map[][MAX], Gate gate[2])
 {
 	if(++OldClock >= 500) {
-		Move(Map,gate);
+		if(!Move(Map,gate))
+			return -1;
 		OldClock = 0;
-		return true;
+		return 1;
 	}
-	return false;
+	return 0;
 }
 
 void Snake::Input()
@@ -268,4 +263,18 @@ Snake::~Snake()
 		DeleteSnake(Head);
 		Head = NULL;
 	}
+}
+
+DIRECTION Snake::NextDirection(DIRECTION direction, int count) 
+{
+	const static DIRECTION next[4] = {RIGHT, UP, LEFT, DOWN};
+	const static int dir_to_idx[4] = {2, 0, 1, 3};
+	
+	if(count == 0)
+		return direction;
+	if(count == 1)
+		return next[(dir_to_idx[direction] + 3) % 4];
+	if(count == 2)
+		return next[(dir_to_idx[direction] + 1) % 4];
+	return next[(dir_to_idx[direction] + 2) % 4];
 }

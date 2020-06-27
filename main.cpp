@@ -1,5 +1,9 @@
+#include <cstdlib>
+#include <ctime>
 #include "GameManager.h"
 #include "Color.hpp"
+
+using namespace std;
 
 int main()
 {

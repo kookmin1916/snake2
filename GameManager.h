@@ -1,6 +1,8 @@
 #pragma once
 
 #include <ncurses.h>
+#include <cstdlib>
+#include <vector>
 #include "Color.hpp"
 #include "Mecro.h"
 #include "Snake.h"
@@ -31,25 +33,26 @@ class GameManager
 {
 private:
 	Mission mission[4];
-	int Stage;
 	Snake snake;
-	int Map[MAX][MAX];
-	int Map1[MAX][MAX];
-	int Map2[MAX][MAX];
-	int Map3[MAX][MAX];
+	Gate gate[2];
 	ITEM ItemList[3];
+	
+	int Stage;
+	int Map[4][MAX][MAX];
+	vector<pair<int, int> > wall_list[4];
+	
 	int OldItemClock;
 	int OldGateClock;
-	Gate gate[2];
 
 public:
 	bool MissionCheck();
 	void SetGate(int Map[MAX][MAX]);
 	void Update(int Map[MAX][MAX]);
 	void SetItem(int Map[MAX][MAX]);
-	void MapDraw(int Map[MAX][MAX]);
+	void DrawMap(int Map[MAX][MAX]);
 	void DrawBlock(int color);
 	void GamePlay();
+
 	GameManager();
 	~GameManager();
 };

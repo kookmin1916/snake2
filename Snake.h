@@ -36,18 +36,19 @@ private:
 public:
 	bool TailCheck(int x, int y);
 	void GateCheck(int Map[][MAX],Gate gate[2]);
-	void Poison();
+	bool Poison();
 	void Growth();
-	void ItemCheck(int Map[MAX][MAX]);
+	bool ItemCheck(int Map[MAX][MAX]);
 	bool CheckNode(int x, int y);
 	void Input();
 	void DeleteMap(int Map[][MAX]);
 	void DeleteSnake(Node* Node);
 	void SetSnake(int x, int y);
-	bool Update(int Map[][MAX],Gate gate[2]);
+	int Update(int Map[][MAX],Gate gate[2]);
 	void UpdateMap(int Map[][MAX]);
-	void Move(int Map[][MAX], Gate gate[2]);
+	bool Move(int Map[][MAX], Gate gate[2]);
 	void MoveTail(Node* Node);
+	DIRECTION NextDirection(DIRECTION direction, int count);
 
 	int GetLevel() { return Level; }
 	int GetGrowth() { return GrowthCount; }
